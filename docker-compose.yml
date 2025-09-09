@@ -1,71 +1,27 @@
-version: "3.9"
+frontend:
+  build: ./frontend
+  container_name: frontend
+  ports:
+    - "3000:80"   # host:container
+  networks:
+    - app-network
 
-services:
-  frontend:
-    build: ./frontend
-    container_name: frontend
-    expose:
-      - "80"
-    networks:
-      - app-network
+users-service:
+  build: ./users-service
+  container_name: users-service
+  ports:
+    - "4001:4001"
+  depends_on:
+    - mongo
+  networks:
+    - app-network
 
-  users-service:
-    build: ./users-service
-    container_name: users-service
-    expose:
-      - "4001"
-    depends_on:
-      - mongo
-    networks:
-      - app-network
-
-  orders-service:
-    build: ./orders-service
-    container_name: orders-service
-    expose:
-      - "4002"
-    depends_on:
-      - mysql
-    networks:
-      - app-network
-
-  mongo:
-    image: mongo:5
-    container_name: mongo
-    volumes:
-      - mongo-data:/data/db
-    networks:
-      - app-network
-
-  mysql:
-    image: mysql:8
-    container_name: mysql
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpassword}
-      MYSQL_DATABASE: ${MYSQL_DATABASE:-ordersdb}
-    volumes:
-      - mysql-data:/var/lib/mysql
-    networks:
-      - app-network
-
-  #nginx:
-  #  image: nginx:latest
-  #  container_name: nginx
- #   ports:
-  #    - "80:80"
-   # volumes:
-    #  - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-   # depends_on:
-    #  - frontend
-    # - users-service
-    #  - orders-service
-   # networks:
-   #  - app-network
-
-volumes:
-  mongo-data:
-  mysql-data:
-
-networks:
-  app-network:
-    driver: bridge
+orders-service:
+  build: ./orders-service
+  container_name: orders-service
+  ports:
+    - "4002:4002"
+  depends_on:
+    - mysql
+  networks:
+    - app-network
