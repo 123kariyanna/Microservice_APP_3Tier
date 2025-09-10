@@ -56,4 +56,7 @@ res.json({ id: result.insertId, product });
 
 
 const port = process.env.PORT || 4002;
-app.listen(port, () => cons
+
+app.listen(port, () => {
+  console.log(`Orders service running on port ${port}`);
+});
